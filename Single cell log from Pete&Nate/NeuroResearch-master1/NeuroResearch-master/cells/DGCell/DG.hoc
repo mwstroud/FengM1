@@ -1,0 +1,102 @@
+begintemplate DGCell
+    public soma, dend
+    
+    create soma
+    create dend[2]
+
+    proc init(){
+	
+        
+        soma {L = 20 diam = 15 nseg = 1}
+        dend[0] {diam= 3 L=270 nseg=8}     
+		dend[1] {diam =5 L=555 nseg=7} 
+
+		gh = 0 //4.00e-05
+		gnat = 0.06
+		gk = 0.02
+		gnap = 0.0008
+		gim = 0.008
+
+        soma { 
+            cm = 0.8
+			insert leakDG
+            
+			insert natDG
+			gbar_natDG = gnat
+			ena = 45
+		
+            insert kdrDG
+			gbar_kdrDG = gk
+			ek = -80
+
+			insert hdDG
+			ghdbar_hdDG = gh
+			ehd = -45
+            
+			insert nap
+			gbar_nap = gnap
+			
+			insert im
+			gbar_im = gim
+			
+        }
+
+				
+        dend[0] {
+			cm = 0.8
+            insert leakDG
+			
+			insert natDG
+			gbar_natDG = gnat
+			ena = 45
+		
+            insert kdrDG
+			gbar_kdrDG = gk
+            ek = -80
+            
+			insert hdDG
+			ghdbar_hdDG = gh
+			ehd = -45
+			
+			insert nap
+			gbar_nap = gnap
+			
+			insert im
+			gbar_im = gim
+
+        }
+
+        dend[1] {
+			cm = 0.8
+
+            insert leakDG
+			
+			insert natDG
+			gbar_natDG = gnat
+			ena = 45
+		
+            insert kdrDG
+			gbar_kdrDG = gk
+            ek = -80
+
+			insert hdDG
+			ghdbar_hdDG = gh
+			ehd = -45
+      
+			insert nap
+			gbar_nap = gnap
+			
+			insert im
+			gbar_im = gim
+				 
+        }
+		
+		
+
+        connect soma(1), dend[0](0)
+		connect dend[1](1), soma(0)
+
+        define_shape()
+    }
+
+endtemplate DGCell

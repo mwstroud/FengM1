@@ -1,0 +1,13 @@
+#!/bin/sh
+if test "x${NRNHOME}" = "x" ; then
+	NRNHOME="/home/mwsrgf/nrn/nrn/neuron_install/nrn"
+fi
+if test "x${NRNBIN}" = "x" ; then
+	NRNBIN="/home/mwsrgf/nrn/nrn/neuron_install/nrn/x86_64/bin/"
+fi
+if test "" = "yes" ; then
+	NRNIV="${NRNBIN}nrniv.app/Contents/MacOS/nrniv"
+else
+	NRNIV="${NRNBIN}nrniv"
+fi
+"${NRNIV}" -dll "/home/mwsrgf/research/FengM1/NEURONCODE/MotorCortex/x86_64/.libs/libnrnmech.so" "$@"

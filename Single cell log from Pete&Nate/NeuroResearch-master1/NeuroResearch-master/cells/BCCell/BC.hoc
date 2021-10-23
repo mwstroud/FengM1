@@ -1,0 +1,74 @@
+begintemplate BCCell
+
+	public soma, dend
+	create soma, dend
+
+	proc init() {	
+		
+		cap = 1
+
+		gna = 0.1
+		kmna = 7.2 //14
+		khna = 4
+
+		gkdr = 1.0385e-03 //1.0385e-03
+		khkdr = 11
+		
+		//gh = 1.5e-04
+		//gnap = 5e-05
+		
+		
+		/////// topology ////////
+		connect dend(0), soma(1)
+
+		/////// geometry ////////
+		soma { nseg=1 L=15 diam=15}
+		dend { nseg=1 L=400	diam=15}
+
+		/////// biophysics //////
+		soma {
+			cm = cap 		    // (microF/cm2)
+			
+			insert leakBC
+	
+			insert natBC
+			insert kdrBC
+
+	    }
+
+		dend {
+			cm = cap 
+			
+			insert leakBC
+		
+			insert natBC
+			insert kdrBC
+		
+		}
+		
+		soma {
+			
+			ena = 54
+			gbar_natBC = gna
+			km_natBC = kmna
+			kh_natBC = khna
+
+			ek = -90
+			gbar_kdrBC = gkdr
+			kh_kdrBC = khkdr		
+		}
+
+		dend {
+			
+			ena = 54
+			gbar_natBC = gna
+			km_natBC = kmna
+			kh_natBC = khna
+
+			ek = -90
+			gbar_kdrBC = gkdr
+			kh_kdrBC = khkdr
+		}
+	}
+
+endtemplate BCCell

@@ -1,0 +1,72 @@
+{
+  "target_simulator": "NEURON",
+  "run": {
+    "tstart": 0.0,
+    "tstop": 1000.0,
+    "dt": 0.1,
+    "dL": 20.0,
+    "spike_threshold": -15.0,
+    "nsteps_block": 5000
+  },
+  "conditions": {
+    "celsius": 34.0,
+    "v_init": -50.0
+  },
+  "node_sets": {
+    "hco1": {
+      "cell_name": "HCOCell1"
+    }
+  },
+  "inputs": {
+    "current_clamp": {
+      "input_type": "current_clamp",
+      "module": "IClamp",
+      "node_set": "hco1",
+      "amp": 1.0,
+      "delay": 50.0,
+      "duration": 10.0
+    }
+  },
+  "output": {
+    "log_file": "log.txt",
+    "output_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/output",
+    "spikes_file": "spikes.h5"
+  },
+  "reports": {
+    "membrane_report": {
+      "module": "membrane_report",
+      "cells": "all",
+      "variable_name": [
+        "cai",
+        "v"
+      ],
+      "file_name": "cell_vars.h5",
+      "sections": "soma"
+    }
+  },
+  "network": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/circuit_config2.json",
+  "config_path": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/simulation_config2.json",
+  "config_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial",
+  "components": {
+    "biophysical_neuron_models_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/components/biophysical_neuron_models",
+    "point_neuron_models_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/components/point_neuron_models",
+    "synaptic_models_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/components/synaptic_models",
+    "morphologies_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/components/morphologies",
+    "mechanisms_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/components/mechanisms",
+    "templates_dir": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/components/hoc_templates"
+  },
+  "networks": {
+    "nodes": [
+      {
+        "nodes_file": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/network/hco_net_nodes.h5",
+        "node_types_file": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/network/hco_net_node_types.csv"
+      }
+    ],
+    "edges": [
+      {
+        "edges_file": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/network/hco_net_hco_net_edges.h5",
+        "edge_types_file": "/home/mizzou/Documents/NeuroResearch/bmtk_tutorial/network/hco_net_hco_net_edge_types.csv"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+objref g, p
+p = new PWManager()
+
+proc myGraph(){
+	g = new Graph()
+	g.align(1,0)  
+	g.size(0,tstop,$6,$7)
+	graphList[0].append(g)
+	g.addexpr($s2,$s1,3,1,tstop,$7)
+	p.window_place($3, $4, $5)
+}
+
+proc newGraph(){
+	g = new Graph()
+	g.align(1,0)  
+	g.size(0,tstop,$3,$4)
+	graphList[0].append(g)
+	g.addexpr($s2,$s1,3,1,tstop,$4)
+}
+
+proc newTwoGraph(){
+	g = new Graph()
+	g.align(1,0)  
+	g.size(0,tstop,$5,$6)
+	graphList[0].append(g)
+	g.addexpr($s2,$s1,3,1,tstop,$6)
+	g.addexpr($s4,$s3,2,1,tstop,$6)
+}
+
+proc newPostSynCaGraph(){
+	g = new Graph()
+	g.align(1,0)
+	g.size(0,tstop,$3,$4)
+	graphList[0].append(g)
+	g.addexpr($s2,$s1,3,1,tstop,$4)
+	g.addexpr(" ",$s5,4,5,tstop,$4)
+	g.addexpr(" ",$s6,4,5,tstop,$4)
+}
+
+proc newPhaseGraph(){
+	g = new Graph()
+	g.align(1,0)
+	g.size($4,$5,$6,$7)
+	graphList[0].append(g)
+	g.xexpr($s1)
+	g.addexpr($s3,$s2,3,1,$5,$7)
+}
+
+proc newPhaseNullclineGraph(){
+	g = new Graph()
+	g.align(1,0)
+	g.size($4,$5,$6,$7)
+	graphList[0].append(g)
+	g.xexpr($s1)
+	$o9.plot(g,$o8,4,5)
+	$o10.plot(g,$o8,4,1)
+	$o11.plot(g,$o8,4,1)
+	g.addexpr($s3,$s2,3,1,$5,$7)
+}

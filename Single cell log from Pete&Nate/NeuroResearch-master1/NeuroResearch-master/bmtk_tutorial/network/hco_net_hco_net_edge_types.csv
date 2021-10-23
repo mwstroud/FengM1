@@ -1,0 +1,3 @@
+edge_type_id target_query source_query distance_range target_sections model_template delay syn_weight dynamics_params
+100 cell_name=='HCOCell2' cell_name=='HCOCell1' "[0, 999]" ['soma'] Exp2Syn 0.0 0.4 GABA_InhToInh.json
+101 cell_name=='HCOCell1' cell_name=='HCOCell2' "[0, 999]" ['soma'] Exp2Syn 0.0 0.4 GABA_InhToInh.json

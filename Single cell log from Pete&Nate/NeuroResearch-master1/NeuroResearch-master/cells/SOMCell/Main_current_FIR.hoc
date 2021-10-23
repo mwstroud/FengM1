@@ -1,0 +1,245 @@
+load_file("nrngui.hoc")
+//cvode_active(1)
+load_file("stdgui.hoc")
+//load_file("LAcells_template_LFP_segconsider_all_Iinject_recordingimembrane.hoc") // point LFP
+load_file("SOM.hoc") // Change the template file according to cell-type needed
+//load_file("LAcells_template_LFP_segconsider_all_Iinject_oritation_RC_forVclamp.hoc")
+//load_file("interneuron_template_gj_LFP_Iinject_recordingimembrane.hoc") // Change the template file according to cell-type needed
+//load_file("interneuron_template_gj_LFP_Iinject_line_oritation.hoc")
+
+///// pyramidal graphs scale ////
+xmin_Pyr = 0
+xmax_Pyr = 2000
+ymin_Pyr = -80
+ymax_Pyr = 40
+
+///// simulation control ////
+secondorder = 2
+dt = 0.01//0.05//0.2//0.01
+
+steps_per_ms= 100//20
+tstop = 1000//1000//80500	// (ms)
+celsius = 31
+v_init = -70
+
+/////////////////////////
+// Cells Specification //
+/////////////////////////
+
+t0 = startsw()
+
+proc init() {
+        finitialize(v_init)
+        //fcurrent()
+	//vrec = fieldrec()
+}
+
+objref cell_3
+cell_3 = new SOM_Cell()//InterneuronCell(0,0,0,50,0,0)
+//cell_3 = new Cell_C(0.5,0.5,0.5,0,0,0,1,0,0)
+//objref fluc
+//cell_3.soma fluc = new Gfluct2(0.5)
+//fluc.std_e = 0.012//0.012		// 4 times larger
+//fluc.std_i = 0.0264//0.0264
+
+//fluc.g_e0 = 0.009//0.0121
+//fluc.g_i0 = 0.09//0.0573
+
+//load_file("interpxyz.hoc")	// only interpolates sections that have extracellular
+//grindaway()
+//load_file("setpointers.hoc")	// automatically calls grindaway() in interpxyz.hoc
+
+//load_file("field.hoc")		// computes extracellularly recorded potential vrec
+//load_file("calcrxc.hoc")	// computes transfer r between segments and recording electrodes
+
+/////////////////////
+// Instrumentation //
+/////////////////////
+///// pyramidal current clamp ////
+delay_Pyr = 100		//(ms)
+duration_Pyr = 600//(ms)
+amplitude_Pyr = 160//400	//(pA)
+
+
+///// current clamp ////
+objref  ccl, cclA, cclB, cclC, cclI
+
+cell_3.soma cclA = new currentclamp(0.5)
+cclA.del = delay_Pyr		// (ms)
+cclA.dur = duration_Pyr		// (ms)
+cclA.amp = amplitude_Pyr*1e-3	// (nA)
+
+//cell_3.drv.amp=0.0
+
+
+/* objref myvrec
+myvrec= new Vector()
+myvrec.record(&LFP_xtra,1) */
+
+access cell_3.soma
+nseg_soma = 1
+R_S = ri(1/(nseg_soma*2))
+R_S_2 = ri(1)
+area_soma=area(0.5)
+//for (x) print x, area(x), ri(x)
+access cell_3.dend
+nseg_api = 8
+R_api = ri(1/(nseg_api*2))
+area_dend=area(0.5)
+
+
+//for (x) print x, area(x), ri(x)
+//access cell_3.p_dend
+//nseg_basal = 7
+//R_b = ri(1/(nseg_basal*2))
+//for (x) print x, area(x), ri(x)
+
+
+/////////////////////////////////////////////////////////////
+/////////////////////   Synapse model   ////////////////////
+/////////////////////////////////////////////////////////////
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+SubVBoxNum = 4
+objref MainHBoxObj,SubVBoxObj[SubVBoxNum]
+
+proc MainBox() { local i
+		MainHBoxObj = new HBox()
+		for i=0,SubVBoxNum-1 SubVBoxObj[i] = new VBox()
+		SubVBoxObj[0].intercept(1)
+			newPlotVoltage1()
+			newPlotVoltage2()
+			newPlotVoltage3()
+		SubVBoxObj[0].intercept(0)
+		SubVBoxObj[1].intercept(1)			
+			newPlotCurrent() 
+			newPlotCurrent2()
+		SubVBoxObj[1].intercept(0)
+		SubVBoxObj[2].intercept(1)
+			access cell_3.soma
+			nrnsecmenu(.5,1)
+			access cell_3.dend
+			nrnsecmenu(.5,1)	
+			//access cell_3.p_dend
+			nrnsecmenu(.5,1)			
+		SubVBoxObj[2].intercept(0)
+		SubVBoxObj[3].intercept(1)
+			nrncontrolmenu()
+			xpanel(" ")
+				xbutton("QUIT","quit()")
+			xpanel(0)
+			nrnpointmenu(cclA)
+		SubVBoxObj[3].intercept(0)
+		MainHBoxObj.intercept(1)
+			for i=0,SubVBoxNum-1 SubVBoxObj[i].map()
+		MainHBoxObj.intercept(0)
+		MainHBoxObj.map("Re-Tune",10,25,800,600)
+}
+
+strdef tstr,tstr1
+
+proc newPlotVoltage1() {
+	newPlot(0,tstop,-100,50)
+	graphItem.save_name("graphList[0].")
+	graphList[0].append(graphItem)
+	graphItem.addexpr("cell_3.soma.v(.5)")
+	graphItem.label(.08,.925,"mV")
+}
+proc newPlotVoltage2() {
+	newPlot(0,tstop,-100,50)
+	graphItem.save_name("graphList[0].")
+	graphList[0].append(graphItem)
+	graphItem.addexpr("cell_3.dend.v(.5)")
+	//graphItem.addexpr("LFP_xtra")
+	//graphItem.addexpr("cell_3.soma.LFPtemp_xtra",2,1)
+	//graphItem.addexpr("cell_3.dend.LFPtemp_xtra",3,1)
+	//graphItem.addexpr("cell_3.p_dend.LFPtemp_xtra",4,1)
+		//graphItem.addexpr("cell_3.p_dend.LFPtemp_xtra+cell_3.soma.LFPtemp_xtra+cell_3.dend.LFPtemp_xtra",5,2)
+
+
+	graphItem.label(.08,.925,"uV")
+}
+proc newPlotVoltage3() {
+	newPlot(0,tstop,-100,50)
+	graphItem.save_name("graphList[0].")
+	graphList[0].append(graphItem)
+	graphItem.addexpr("LFP_xtra")
+
+
+	
+	graphItem.label(.08,.925,"uV")
+}
+proc newPlotCurrent() {
+	newPlot(0,tstop,-0.2,0.2)
+	graphItem.save_name("graphList[2].")
+	graphList[1].append(graphItem)
+	//graphItem.addexpr("(-cell_3.dend.v(0.5)+ cell_3.soma.v(0.5))/(R_S + R_api)-(cell_3.p_dend.v(0.5) - cell_3.soma.v(0.5))/(R_S_2 + R_b)",1,2)  // (0.016129))/(0.0382 + 12.16)",1,2)
+	//graphItem.addexpr("cell_3.soma.ik",2,2)
+	//graphItem.addexpr("(-cell_3.dend.v(1/8)+ cell_3.soma.v(0.5))/(R_S + R_api)",1,2)  // (0.016129))/(0.0382 + 12.16)",1,2)
+    //graphItem.addexpr("cell_3.dend.i_membrane(1/8)*area_dend/100",2,4)
+	//graphItem.addexpr("cell_3.dend.i_membrane(0.5)*area_dend/100",3,1)
+
+	//tstr1 = units(&cell_3.soma.ina)
+	//graphItem.label(.08,.925,tstr1)
+}
+
+proc newPlotCurrent2() {
+	newPlot(0,tstop,-0.3,0.15)
+	graphItem.save_name("graphList[2].")
+	graphList[1].append(graphItem)
+	//graphItem.addexpr("(cell_3.p_dend.v(0.5) - cell_3.soma.v(0.5))/(R_S_2 + R_b)",1,2)
+	//graphItem.addexpr("cell_3.dend.ik",2,2)
+	//tstr1 = units(&cell_3.dend.ina)
+	//graphItem.label(.08,.925,tstr1)
+}
+
+
+MainBox()
+objref tvec,idvec
+proc spikerecord() {local i localobj nc, nil
+	tvec = new Vector()
+	idvec = new Vector()
+	  nc = cell_3.connect2target(nil)
+	  nc.record(tvec)
+														// the Vector will continue to record spike times even 
+}
+
+spikerecord()
+s_start=44  ///current inject amp sweep to start pA
+s_stop=304   ///current inject amp sweep to stop pA
+s_inter=20   ///current inject amp sweep interval pA
+sweep_num=int((s_stop-s_start)/s_inter+1)
+
+objref spikefile
+spikefile = new File("FIR.txt")
+spikefile.wopen()
+spikefile.close()
+proc FIRout() { local i, rank
+
+spikefile.aopen()                               //"aopen" to append data
+spikefile.printf("%8.4f\t %d\n", tvec.size/duration_Pyr*1e3,amplitude_Pyr)
+spikefile.close()
+
+}
+
+proc batchrun() { local i, tmp
+  //tstop = $2
+  //tmp = soma.gnabar_hh(0.5)
+  for i=0,$2-1 {
+  print i
+   amplitude_Pyr=$1+i*$3
+   cclA.amp = amplitude_Pyr*1e-3	// (nA)
+    //soma.gnabar_hh(0.5) = tmp*i/10
+    run()// executes a simulation
+    //f_volt = new File()
+     FIRout() 
+  }
+  }
+ batchrun(s_start,sweep_num,s_inter) 
+  
+
+
+

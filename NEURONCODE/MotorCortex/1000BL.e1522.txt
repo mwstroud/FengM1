@@ -1,0 +1,6 @@
+NEURON -- VERSION 7.7.2 7.7 (2b7985ba) 2019-06-20
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2018
+See http://neuron.yale.edu/neuron/credits
+
+11 nrniv: can't open BL_main_small_lightdis_randompluses_poisson_automated_onlinepulses_PRC_skip.hoc
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 11
